@@ -36,10 +36,11 @@ require 'verify/firebase/jwt'
 
 > Note: Add the FIREBASE_PROJECT_ID to your `.env`.
 
-### Set up your cache store
+### Set up your RedisCacheStore
 
-[Here](https://guides.rubyonrails.org/caching_with_rails.html#cache-stores) is a good reference.
+[Here](https://guides.rubyonrails.org/caching_with_rails.html#activesupport-cache-rediscachestore) is a good reference.
 
+> Note: `redis` and `hiredis` are already packed in this gem, so there is no need to install them again. 👍
 > Note: The cache store is used to cache the certificates fetched from Google. 😌
 
 ## Usage
