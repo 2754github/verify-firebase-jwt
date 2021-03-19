@@ -41,6 +41,7 @@ require 'verify/firebase/jwt'
 [Here](https://guides.rubyonrails.org/caching_with_rails.html#activesupport-cache-rediscachestore) is a good reference.
 
 > Note: `redis` and `hiredis` are already packed in this gem, so there is no need to install them again. 👍
+
 > Note: The cache store is used to cache the certificates fetched from Google. 😌
 
 ## Usage
