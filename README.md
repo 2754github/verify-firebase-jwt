@@ -1,43 +1,90 @@
-# Verify::Firebase::Jwt
+# verify-firebase-jwt
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/verify/firebase/jwt`. To experiment with that code, run `bin/console` for an interactive prompt.
+A simple Ruby implementation to [verify firebase jwt](https://firebase.google.com/docs/auth/admin/verify-id-tokens#verify_id_tokens_using_a_third-party_jwt_library).
 
-TODO: Delete this and the text above, and describe your gem
+You can use the verified uid immediately on your Rails app! ⬇️
 
-## Installation
+```ruby
+uid = FirebaseAuth.uid(firebase_jwt)
+```
 
-Add this line to your application's Gemfile:
+Main code is [here](https://github.com/2754github/verify-firebase-jwt/blob/master/lib/verify/firebase/jwt.rb). 👈
+
+## Announcements
+
+⚠️ This gem is currently in beta and should be used in production with caution! 🙇‍♂️
+
+## Install
+
+Add the following to your `Gemfile`:
 
 ```ruby
 gem 'verify-firebase-jwt'
 ```
 
-And then execute:
+And run `bundle install`
 
-    $ bundle install
+## Configure
 
-Or install it yourself as:
+### Initialize the class within your `config/initializers/firebase_auth.rb`:
 
-    $ gem install verify-firebase-jwt
+```ruby
+require 'verify/firebase/jwt'
+
+::FirebaseAuth = FirebaseAuth.new(ENV["FIREBASE_PROJECT_ID"])
+```
+
+> Note: Add the FIREBASE_PROJECT_ID to your `.env`.
+
+### Set up your cache store
+
+[Here](https://guides.rubyonrails.org/caching_with_rails.html#cache-stores) is a good reference.
+
+> Note: The cache store is used to cache the certificates fetched from Google. 😌
 
 ## Usage
 
-TODO: Write usage instructions here
+### Frontend:
 
-## Development
+```js
+firebase
+  .auth()
+  .currentUser.getIdToken(/* forceRefresh */ true)
+  .then(function (idToken) {
+    // Send token to your backend via HTTPS
+    // ...
+  })
+  .catch(function (error) {
+    // Handle error
+  });
+```
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+> Note: [Here](https://firebase.google.com/docs/auth/admin/verify-id-tokens#retrieve_id_tokens_on_clients) is the official Firebase documentation.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+### Backend (Your Rails app):
+
+```ruby
+# firebase_jwt = "eyJhbGciOiJfzKic... <= Received from Frontend
+
+begin
+  uid = FirebaseAuth.uid(firebase_jwt)
+rescue => e
+  class FirebaseAuthError < StandardError; end
+  # class FirebaseAuthError < GraphQL::ExecutionError; end
+  raise FirebaseAuthError.new("#{e.class} (#{e.message})")
+end
+
+puts uid # => Hdh4pa2YdlGCMyJv9rORNkIjNju2
+```
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/verify-firebase-jwt. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/verify-firebase-jwt/blob/master/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/2754github/verify-firebase-jwt. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/2754github/verify-firebase-jwt/blob/master/CODE_OF_CONDUCT.md).
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT). For more details please refer to [license](https://github.com/2754github/verify-firebase-jwt/blob/master/LICENSE.txt).
 
 ## Code of Conduct
 
-Everyone interacting in the Verify::Firebase::Jwt project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/verify-firebase-jwt/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the Verify::Firebase::Jwt project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/2754github/verify-firebase-jwt/blob/master/CODE_OF_CONDUCT.md).
