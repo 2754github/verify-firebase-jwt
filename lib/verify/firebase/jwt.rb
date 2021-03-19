@@ -1,7 +1,7 @@
 require_relative "jwt/version"
 
 # https://firebase.google.com/docs/auth/admin/verify-id-tokens#verify_id_tokens_using_a_third-party_jwt_library
-# https://github.com/jwt/ruby-jwt (Search for RS256)
+# https://github.com/jwt/ruby-jwt#:~:text=RS256,algorithm
 
 require "jwt"
 
@@ -34,7 +34,7 @@ class FirebaseAuth
     payload, _ = JWT.decode(firebase_jwt, key=public_key, verify=true, options)
     uid = payload["sub"]
 
-    # uid is 1~128 characters: https://firebase.google.com/docs/auth/admin/manage-users#create_a_user
+    # https://firebase.google.com/docs/auth/admin/manage-users#:~:text=Must%20be,128%20characters%20long
     raise InvalidTokenError.new("Invalid sub") if uid.length < 1 || uid.length > 128
     raise InvalidTokenError.new("Invalid auth_time") if Time.zone.at(payload["auth_time"]).future?
     uid
